@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Supershyft Health Camp Registration{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #fafafa;
+            color: #333;
+            line-height: 1.5;
+            min-height: 100vh;
+            font-size: 14px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            color: #666;
+            max-width: 500px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+        
+        /* Form Styles */
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e8e8e8;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        
+        .form-group input[type="date"] {
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+            appearance: none;
+            position: relative;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23666'%3e%3cpath fill-rule='evenodd' d='M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z' clip-rule='evenodd'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+        
+        .form-group input[type="date"]::-webkit-calendar-picker-indicator {
+            opacity: 0;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .form-group input[type="date"]::-webkit-inner-spin-button,
+        .form-group input[type="date"]::-webkit-clear-button {
+            display: none;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+        
+        .form-group input:hover,
+        .form-group select:hover {
+            border-color: #bbb;
+        }
+        
+        /* Radio Button Styles */
+        .radio-group {
+            display: flex;
+            gap: 24px;
+            margin-top: 8px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .radio-option input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: #007AFF;
+        }
+        
+        /* Time Slot Buttons */
+        .slot-button {
+            display: inline-block;
+            padding: 10px 16px;
+            margin: 4px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background: white;
+            color: #333;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .slot-button:hover {
+            border-color: #007AFF;
+            background: #f8f9ff;
+            color: #007AFF;
+        }
+        
+        .slot-button.selected {
+            background: #007AFF;
+            border-color: #007AFF;
+            color: white;
+        }
+        
+        .slot-button:disabled {
+            background: #f5f5f5;
+            color: #999;
+            border-color: #e0e0e0;
+            cursor: not-allowed;
+        }
+        
+        /* Info Box */
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            font-size: 13px;
+            color: #495057;
+        }
+        
+        .info-box strong {
+            color: #212529;
+            font-weight: 600;
+        }
+        
+        /* Cabin Info */
+        .cabin-info {
+            background: #fff9e6;
+            border: 1px solid #ffd93d;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #8b5a00;
+        }
+        
+        .cabin-info strong {
+            color: #995700;
+        }
+        
+        /* Button Styles */
+        .btn {
+            background: #007AFF;
+            color: white;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            margin-top: 20px;
+            font-family: inherit;
+        }
+        
+        .btn:hover:not(:disabled) {
+            background: #0056b3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Alert Styles */
+        .alert {
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-success h2 {
+            margin-bottom: 8px;
+            font-size: 20px;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .loading i {
+            font-size: 20px;
+            margin-bottom: 8px;
+            animation: spin 1s linear infinite;
+            color: #007AFF;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Admin Panel Styles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e8e8e8;
+        }
+        
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #007AFF;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e8e8e8;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f3f4;
+            color: #333;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .form-section {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .header p {
+                font-size: 14px;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .slot-button {
+                display: block;
+                width: 100%;
+                margin: 4px 0;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 600px;
+            }
+        }
+        
+        /* Calendar-like grid for time slots */
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        /* Consultation section toggle */
+        #consultationSection {
+            background: #f8f9ff;
+            border: 1px solid #e6edff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+        
+        /* Success page specific styles */
+        .booking-details {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 16px 0;
+            border-left: 4px solid #007AFF;
+        }
+        
+        .booking-details h3 {
+            color: #007AFF;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        
+        .booking-details p {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        /* Link styling */
+        a {
+            color: #007AFF;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Form validation styles */
+        .form-group input:invalid {
+            border-color: #dc3545;
+        }
+        
+        .form-group input:valid {
+            border-color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Supershyft Health Camp</h1>
+            <p>Book your Blood Test Appointment and schedule a Consultation with our Doctor and Nutrition Expert</p>
+        </div>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-error">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

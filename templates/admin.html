@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Supershyft Health Camp</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #fafafa;
+            color: #333;
+            line-height: 1.5;
+            min-height: 100vh;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 24px 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e8e8e8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 0;
+        }
+
+        .btn {
+            background: #007AFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e8e8e8;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 600;
+            color: #007AFF;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .search-filters {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e8e8e8;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.1);
+        }
+
+        .search-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .results-info {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #495057;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bookings-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e8e8e8;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th,
+        td {
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .booking-id {
+            font-weight: 600;
+            color: #007AFF;
+        }
+
+        .cabin-badge {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .consultation-badge {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .gender-badge {
+            background: #fff3cd;
+            color: #856404;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .gender-badge.male {
+            background: #cce5ff;
+            color: #0066cc;
+        }
+
+        .gender-badge.female {
+            background: #ffe6f2;
+            color: #cc0066;
+        }
+
+        .no-consultation {
+            color: #999;
+            font-style: italic;
+            font-size: 11px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .highlight {
+            background: yellow;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        .export-btn {
+            background: #28a745;
+            margin-left: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .bookings-section {
+                padding: 20px;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-actions {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            th,
+            td {
+                padding: 6px 4px;
+                font-size: 11px;
+            }
+
+            .table-container {
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-chart-bar" style="margin-right: 12px;"></i>Admin Panel</h1>
+            <div>
+                <a href="/" class="btn">
+                    <i class="fas fa-plus" style="margin-right: 8px;"></i>
+                    New Booking
+                </a>
+                <button class="btn btn-success export-btn" onclick="exportToCSV()">
+                    <i class="fas fa-download" style="margin-right: 8px;"></i>
+                    Export CSV
+                </button>
+                <a href="/admin/logout" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalBookings">{{ bookings|length }}</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="withConsultation">{{ bookings|selectattr('9')|list|length }}</div>
+                <div class="stat-label">With Consultation</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="bloodTestOnly">{{ bookings|rejectattr('9')|list|length }}</div>
+                <div class="stat-label">Blood Test Only</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayBookings">0</div>
+                <div class="stat-label">Today's Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="maleCount">{{ bookings|selectattr('4', 'equalto', 'male')|list|length }}
+                </div>
+                <div class="stat-label">Male</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="femaleCount">{{ bookings|selectattr('4', 'equalto', 'female')|list|length
+                    }}</div>
+                <div class="stat-label">Female</div>
+            </div>
+        </div>
+
+        <div class="search-filters">
+            <div class="filters-grid">
+                <div class="form-group">
+                    <label for="searchName">Search Name/Email/Phone</label>
+                    <input type="text" id="searchName" placeholder="Type to search...">
+                </div>
+                <div class="form-group">
+                    <label for="filterGender">Gender</label>
+                    <select id="filterGender">
+                        <option value="">All Genders</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filterBloodDate">Blood Test Date</label>
+                    <input type="date" id="filterBloodDate">
+                </div>
+                <div class="form-group">
+                    <label for="filterConsultation">Consultation Status</label>
+                    <select id="filterConsultation">
+                        <option value="">All</option>
+                        <option value="yes">Has Consultation</option>
+                        <option value="no">Blood Test Only</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filterCabin">Blood Test Cabin</label>
+                    <select id="filterCabin">
+                        <option value="">All Cabins</option>
+                        <option value="1">Cabin 1</option>
+                        <option value="2">Cabin 2</option>
+                        <option value="3">Cabin 3</option>
+                        <option value="4">Cabin 4</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sortBy">Sort By</label>
+                    <select id="sortBy">
+                        <option value="id">Booking ID</option>
+                        <option value="name">Name</option>
+                        <option value="date">Blood Test Date</option>
+                        <option value="created">Created Date</option>
+                    </select>
+                </div>
+            </div>
+            <div class="search-actions">
+                <button class="btn" onclick="applyFilters()">
+                    <i class="fas fa-search" style="margin-right: 8px;"></i>
+                    Apply Filters
+                </button>
+                <button class="btn btn-secondary" onclick="clearFilters()">
+                    <i class="fas fa-times" style="margin-right: 8px;"></i>
+                    Clear
+                </button>
+                <div class="results-info" id="resultsInfo" style="display: none;">
+                    <span id="resultsCount">0 results found</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bookings-section">
+            <div class="section-title">All Bookings</div>
+
+            {% if bookings %}
+            <div class="results-info">
+                <span>Showing <strong id="displayedCount">{{ bookings|length }}</strong> of <strong>{{ bookings|length
+                        }}</strong> bookings</span>
+                <span>Last updated: <strong id="lastUpdated"></strong></span>
+            </div>
+            <div class="table-container">
+                <table id="bookingsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Age</th>
+                            <th>Gender</th>
+                            <th>Phone</th>
+                            <th>Blood Test Date</th>
+                            <th>Blood Test Time</th>
+                            <th>BT Cabin</th>
+                            <th>Consultation Date</th>
+                            <th>Consultation Time</th>
+                            <th>Cons Cabin</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTableBody">
+                        {% for booking in bookings %}
+                        <tr data-booking='{{ booking|tojson|safe }}'>
+                            <td><span class="booking-id">#{{ booking[0] }}</span></td>
+                            <td><strong>{{ booking[1] }}</strong></td>
+                            <td>{{ booking[2] }}</td>
+                            <td>{{ booking[3] }}</td>
+                            <td>
+                                <span class="gender-badge {{ booking[4] }}">{{ booking[4]|title }}</span>
+                            </td>
+                            <td>{{ booking[5] }}</td>
+                            <td>
+                                {% if booking[6] %}
+                                <strong>{{ booking[6] }}</strong>
+                                {% else %}
+                                <span class="no-consultation">Not scheduled</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if booking[7] %}
+                                {{ booking[7] }}
+                                {% else %}
+                                <span class="no-consultation">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if booking[8] %}
+                                <span class="cabin-badge">Cabin {{ booking[8] }}</span>
+                                {% else %}
+                                <span class="no-consultation">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if booking[9] %}
+                                <strong>{{ booking[9] }}</strong>
+                                {% else %}
+                                <span class="no-consultation">Not booked</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if booking[10] %}
+                                {{ booking[10] }}
+                                {% else %}
+                                <span class="no-consultation">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if booking[11] %}
+                                <span class="consultation-badge">Cabin {{ booking[11] }}</span>
+                                {% else %}
+                                <span class="no-consultation">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if booking[12] %}
+                                {{ booking[12][:16] }}
+                                {% else %}
+                                <span class="no-consultation">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-calendar-times"></i>
+                <h3>No bookings yet</h3>
+                <p>When people start booking appointments, they'll appear here.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        let allBookings = [];
+        let filteredBookings = [];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get all bookings data
+            const rows = document.querySelectorAll('#bookingsTableBody tr');
+            rows.forEach(row => {
+                const bookingData = JSON.parse(row.getAttribute('data-booking'));
+                allBookings.push(bookingData);
+            });
+            filteredBookings = [...allBookings];
+
+            updateLastUpdated();
+            calculateTodayBookings();
+
+            // Add real-time search
+            document.getElementById('searchName').addEventListener('input', applyFilters);
+        });
+
+        function applyFilters() {
+            const searchName = document.getElementById('searchName').value.toLowerCase();
+            const filterGender = document.getElementById('filterGender').value;
+            const filterBloodDate = document.getElementById('filterBloodDate').value;
+            const filterConsultation = document.getElementById('filterConsultation').value;
+            const filterCabin = document.getElementById('filterCabin').value;
+            const sortBy = document.getElementById('sortBy').value;
+
+            filteredBookings = allBookings.filter(booking => {
+                // Search in name, email, phone
+                const searchText = `${booking[1]} ${booking[2]} ${booking[5]}`.toLowerCase();
+                const matchesSearch = !searchName || searchText.includes(searchName);
+
+                // Gender filter
+                const matchesGender = !filterGender || booking[4] === filterGender;
+
+                // Blood test date filter
+                const matchesBloodDate = !filterBloodDate || booking[6] === filterBloodDate;
+
+                // Consultation filter
+                let matchesConsultation = true;
+                if (filterConsultation === 'yes') {
+                    matchesConsultation = booking[9] && booking[10]; // Has consultation
+                } else if (filterConsultation === 'no') {
+                    matchesConsultation = !booking[9] || !booking[10]; // No consultation
+                }
+
+                // Cabin filter
+                const matchesCabin = !filterCabin || booking[8] == filterCabin;
+
+                return matchesSearch && matchesGender && matchesBloodDate && matchesConsultation && matchesCabin;
+            });
+
+            // Sort results
+            filteredBookings.sort((a, b) => {
+                switch (sortBy) {
+                    case 'name':
+                        return a[1].localeCompare(b[1]);
+                    case 'date':
+                        return (a[6] || '').localeCompare(b[6] || '');
+                    case 'created':
+                        return (a[12] || '').localeCompare(b[12] || '');
+                    default: // id
+                        return a[0] - b[0];
+                }
+            });
+
+            updateTable();
+            updateStats();
+        }
+
+        function updateTable() {
+            const tbody = document.getElementById('bookingsTableBody');
+            tbody.innerHTML = '';
+
+            filteredBookings.forEach(booking => {
+                const row = createTableRow(booking);
+                tbody.appendChild(row);
+            });
+
+            // Update results count
+            document.getElementById('displayedCount').textContent = filteredBookings.length;
+
+            // Show results info
+            const resultsInfo = document.getElementById('resultsInfo');
+            const resultsCount = document.getElementById('resultsCount');
+            if (filteredBookings.length !== allBookings.length) {
+                resultsCount.textContent = `${filteredBookings.length} of ${allBookings.length} results`;
+                resultsInfo.style.display = 'block';
+            } else {
+                resultsInfo.style.display = 'none';
+            }
+        }
+
+        function createTableRow(booking) {
+            const row = document.createElement('tr');
+
+            const genderClass = booking[4] || '';
+            const bloodTestDate = booking[6] ? `<strong>${booking[6]}</strong>` : '<span class="no-consultation">Not scheduled</span>';
+            const bloodTestTime = booking[7] || '<span class="no-consultation">-</span>';
+            const bloodTestCabin = booking[8] ? `<span class="cabin-badge">Cabin ${booking[8]}</span>` : '<span class="no-consultation">-</span>';
+            const consultationDate = booking[9] ? `<strong>${booking[9]}</strong>` : '<span class="no-consultation">Not booked</span>';
+            const consultationTime = booking[10] || '<span class="no-consultation">-</span>';
+            const consultationCabin = booking[11] ? `<span class="consultation-badge">Cabin ${booking[11]}</span>` : '<span class="no-consultation">-</span>';
+            const createdAt = booking[12] ? booking[12].substring(0, 16) : '<span class="no-consultation">-</span>';
+
+            row.innerHTML = `
+                <td><span class="booking-id">#${booking[0]}</span></td>
+                <td><strong>${booking[1]}</strong></td>
+                <td>${booking[2]}</td>
+                <td>${booking[3]}</td>
+                <td><span class="gender-badge ${genderClass}">${(booking[4] || '').charAt(0).toUpperCase() + (booking[4] || '').slice(1)}</span></td>
+                <td>${booking[5]}</td>
+                <td>${bloodTestDate}</td>
+                <td>${bloodTestTime}</td>
+                <td>${bloodTestCabin}</td>
+                <td>${consultationDate}</td>
+                <td>${consultationTime}</td>
+                <td>${consultationCabin}</td>
+                <td>${createdAt}</td>
+            `;
+
+            return row;
+        }
+
+        function updateStats() {
+            document.getElementById('totalBookings').textContent = filteredBookings.length;
+
+            const withConsultation = filteredBookings.filter(b => b[9] && b[10]).length;
+            document.getElementById('withConsultation').textContent = withConsultation;
+
+            const bloodTestOnly = filteredBookings.length - withConsultation;
+            document.getElementById('bloodTestOnly').textContent = bloodTestOnly;
+
+            const maleCount = filteredBookings.filter(b => b[4] === 'male').length;
+            document.getElementById('maleCount').textContent = maleCount;
+
+            const femaleCount = filteredBookings.filter(b => b[4] === 'female').length;
+            document.getElementById('femaleCount').textContent = femaleCount;
+        }
+
+        function clearFilters() {
+            document.getElementById('searchName').value = '';
+            document.getElementById('filterGender').value = '';
+            document.getElementById('filterBloodDate').value = '';
+            document.getElementById('filterConsultation').value = '';
+            document.getElementById('filterCabin').value = '';
+            document.getElementById('sortBy').value = 'id';
+
+            filteredBookings = [...allBookings];
+            updateTable();
+            updateStats();
+        }
+
+        function calculateTodayBookings() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayBookings = allBookings.filter(booking =>
+                booking[6] === today || booking[9] === today
+            ).length;
+            document.getElementById('todayBookings').textContent = todayBookings;
+        }
+
+        function updateLastUpdated() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('lastUpdated').textContent = timeString;
+        }
+
+        function exportToCSV() {
+            const headers = [
+                'ID', 'Name', 'Email', 'Age', 'Gender', 'Phone',
+                'Blood Test Date', 'Blood Test Time', 'Blood Test Cabin',
+                'Consultation Date', 'Consultation Time', 'Consultation Cabin',
+                'Created At'
+            ];
+
+            let csvContent = headers.join(',') + '\n';
+
+            filteredBookings.forEach(booking => {
+                const row = booking.map(field => {
+                    // Handle null/undefined values and escape commas
+                    const value = field || '';
+                    return `"${value.toString().replace(/"/g, '""')}"`;
+                });
+                csvContent += row.join(',') + '\n';
+            });
+
+            // Create and download file
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `supershyft-bookings-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Refresh data every 30 seconds
+        setInterval(() => {
+            updateLastUpdated();
+        }, 30000);
+    </script>
+</body>
+
+</html>
