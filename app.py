@@ -449,6 +449,58 @@ def admin():
     
     return render_template('admin.html', bookings=bookings)
 
+@app.route('/admin/delete_booking/<int:booking_id>', methods=['POST'])
+@admin_required
+def delete_booking(booking_id):
+    """Delete a specific booking record"""
+    try:
+        conn = sqlite3.connect('bookings.db')
+        cursor = conn.cursor()
+        
+        # First, check if the booking exists
+        cursor.execute('SELECT name FROM bookings WHERE id = ?', (booking_id,))
+        booking = cursor.fetchone()
+        
+        if not booking:
+            flash('Booking not found.')
+            return redirect(url_for('admin'))
+        
+        # Delete the booking
+        cursor.execute('DELETE FROM bookings WHERE id = ?', (booking_id,))
+        conn.commit()
+        
+        if cursor.rowcount > 0:
+            flash(f'Booking #{booking_id} for {booking[0]} has been successfully deleted.')
+        else:
+            flash('Failed to delete booking.')
+        
+        conn.close()
+        
+    except Exception as e:
+        flash(f'Error deleting booking: {str(e)}')
+    
+    return redirect(url_for('admin'))
+
+@app.route('/admin/delete_records')
+@admin_required
+def delete_records():
+    """Show all bookings for deletion management"""
+    conn = sqlite3.connect('bookings.db')
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+        SELECT id, name, email, age, gender, phone, 
+               blood_test_date, blood_test_time, blood_test_cabin,
+               consultation_date, consultation_time, consultation_cabin,
+               created_at
+        FROM bookings 
+        ORDER BY created_at DESC
+    ''')
+    bookings = cursor.fetchall()
+    conn.close()
+    
+    return render_template('delete_records.html', bookings=bookings)
+
 init_db()
 
 if __name__ == '__main__':
